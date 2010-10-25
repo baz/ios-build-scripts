@@ -13,22 +13,25 @@ import string
 
 parser = OptionParser()
 parser.add_option('-f', '--app-bundle', action='store', dest='app_bundle', help='Path to app bundle')
-parser.add_option('-d', '--deployment-path', action='store', dest='deployment_path', help='Remote deployment path, where the app will eventually be hosted')
+parser.add_option('-a', '--archive-name', action='store', dest='archive_name', help='Legacy archive filename')
+parser.add_option('-d', '--deployment-address', action='store', dest='deployment_address', help='Remote deployment path, where the app will eventually be hosted')
 parser.add_option('-i', '--info-plist', action='store', dest='info_plist', default='Info.plist', help='Info.plist filename inside the application bundle (defaults to Info.plist)')
 
 (options, args) = parser.parse_args()
 
 if options.app_bundle == None:
 	parser.error("Please specify the file path to the app bundle.")
-elif options.deployment_path == None:
-	parser.error("Please specify the deployment path.")
+elif options.deployment_address == None:
+	parser.error("Please specify the deployment address.")
+elif options.archive_name == None:
+	parser.error("Please specify the filename of the legacy archive.")
 
 class IPAGenerator(object):
 	"Generate index.html"
 	def generate_html(self, app_name):
 		HTML_FILENAME = 'index.html'
 		index_file = open(HTML_FILENAME, 'w')
-		index_file.write(self.template(app_name, options.deployment_path))
+		index_file.write(self.template(app_name))
 		return HTML_FILENAME
 
 	"Generate manifest by parsing values from the app's Info.plist"
@@ -47,7 +50,7 @@ class IPAGenerator(object):
 						'assets' : [
 							{
 								'kind' : 'software-package',
-								'url' : urlparse.urljoin(options.deployment_path, MANIFEST_FILENAME),
+								'url' : urlparse.urljoin(options.deployment_address, MANIFEST_FILENAME),
 								}
 							],
 						'metadata' : {
@@ -63,7 +66,7 @@ class IPAGenerator(object):
 		return MANIFEST_FILENAME
 
 	"Template from http://github.com/HunterHillegas/iOS-BetaBuilder"
-	def template(self, app_name, deployment_path):
+	def template(self, app_name):
 		template_html = """
 		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 		<html xmlns="http://www.w3.org/1999/xhtml">
@@ -96,7 +99,7 @@ class IPAGenerator(object):
 		Reload this page in your computer browser and download a zipped archive and provisioning profile here:
 		</p>
 		
-		<div class="link"><a href="beta_archive.zip">[BETA_NAME]<br />Archive w/ Provisioning Profile</a></div>
+		<div class="link"><a href="[BETA_ARCHIVE_FILENAME]">[BETA_NAME]<br />Archive w/ Provisioning Profile</a></div>
 		
 		</div>
 		
@@ -105,8 +108,10 @@ class IPAGenerator(object):
 		"""
 		TEMPLATE_PLACEHOLDER_NAME = '[BETA_NAME]'
 		TEMPLATE_PLACEHOLDER_DEPLOYMENT_PATH = '[DEPLOYMENT_PATH]'
+		TEMPLATE_PLACEHOLDER_ARCHIVE_FILENAME = '[BETA_ARCHIVE_FILENAME]'
 		template_html = string.replace(template_html, TEMPLATE_PLACEHOLDER_NAME, app_name)
-		template_html = string.replace(template_html, TEMPLATE_PLACEHOLDER_DEPLOYMENT_PATH, deployment_path)
+		template_html = string.replace(template_html, TEMPLATE_PLACEHOLDER_DEPLOYMENT_PATH, options.deployment_address)
+		template_html = string.replace(template_html, TEMPLATE_PLACEHOLDER_ARCHIVE_FILENAME, options.archive_name)
 		return template_html
 
 generator = IPAGenerator()
