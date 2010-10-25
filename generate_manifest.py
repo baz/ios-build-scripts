@@ -35,7 +35,7 @@ class IPAGenerator(object):
 		return HTML_FILENAME
 
 	"Generate manifest by parsing values from the app's Info.plist"
-	def generate_manifest(self):
+	def generate_manifest(self, app_name):
 		info_plist_filepath = os.path.join(options.app_bundle, options.info_plist)
 		info_plist_xml_filename = 'info_plist.xml'
 		# Use plutil to ensure that we are dealing with XML rather than the binary format
@@ -50,7 +50,7 @@ class IPAGenerator(object):
 						'assets' : [
 							{
 								'kind' : 'software-package',
-								'url' : urlparse.urljoin(options.deployment_address, MANIFEST_FILENAME),
+								'url' : urlparse.urljoin(options.deployment_address, app_name + '.ipa'),
 								}
 							],
 						'metadata' : {
@@ -117,4 +117,4 @@ class IPAGenerator(object):
 generator = IPAGenerator()
 app_name = os.path.splitext(options.app_bundle)[0]
 html_filename = generator.generate_html(app_name)
-manifest_filename = generator.generate_manifest()
+manifest_filename = generator.generate_manifest(app_name)
