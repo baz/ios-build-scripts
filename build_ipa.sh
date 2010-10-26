@@ -19,7 +19,8 @@ security default-keychain -s "$KEYCHAIN_LOCATION"
 security unlock-keychain -p $KEYCHAIN_PASSWORD "$KEYCHAIN_LOCATION"
 xcodebuild -sdk "$SDK" $FORMATTED_TARGET_LIST -configuration "$CONFIGURATION" clean build
 
-GIT_HASH=$(git log --pretty=format:'' | wc -l)-$($GIT_BINARY rev-parse --short HEAD)
+GIT_HASH="$($GIT_BINARY log --pretty=format:'' | wc -l)-$($GIT_BINARY rev-parse --short HEAD)"
+GIT_HASH=${GIT_HASH//[[:space:]]}
 BUILD_DIRECTORY="$(pwd)/build/${CONFIGURATION}-iphoneos"
 cd "$BUILD_DIRECTORY" || die "Build directory does not exist."
 MANIFEST_SCRIPT=$(curl -fsS $MANIFEST_SCRIPT_LOCATION)
