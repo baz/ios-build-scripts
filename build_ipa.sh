@@ -1,8 +1,6 @@
 #!/bin/bash
 # Below are required environment variables with some example content:
-# SDK='iphoneos4.1'
-# FORMATTED_TARGET_LIST='-alltargets'
-# CONFIGURATION='Ad Hoc'
+# XCODE_BUILD_COMMAND='xcodebuild -sdk iphoneos4.1 -alltargets -configuration "Ad Hoc" clean build'
 # DISTRIBUTION_CERTIFICATE='iPhone Distribution: Your Company Pty Ltd'
 # PROVISIONING_PROFILE_PATH='/Users/tomcat/Library/MobileDevice/Provisioning Profiles/Your_Company_Ad_Hoc.mobileprovision'
 # GIT_BINARY='/usr/local/git/bin/git'
@@ -17,7 +15,7 @@
 # Build project
 security default-keychain -s "$KEYCHAIN_LOCATION"
 security unlock-keychain -p $KEYCHAIN_PASSWORD "$KEYCHAIN_LOCATION"
-xcodebuild -sdk "$SDK" $FORMATTED_TARGET_LIST -configuration "$CONFIGURATION" clean build
+eval $XCODE_BUILD_COMMAND
 
 GIT_HASH="$($GIT_BINARY log --pretty=format:'' | wc -l)-$($GIT_BINARY rev-parse --short HEAD)"
 GIT_HASH=${GIT_HASH//[[:space:]]}
