@@ -8,7 +8,7 @@
 # GIT_BINARY='/usr/local/git/bin/git'
 # REMOTE_HOST='your.remote.host.com'
 # REMOTE_PARENT_PATH='/www/docs/ios_builds'
-# MANIFEST_SCRIPT_LOCATION='http://git.yourserver.com/ios-build-scripts/ios-build-scripts/blobs/raw/master/generate_manifest.py'
+# MANIFEST_SCRIPT_LOCATION='http://github.com/baz/ios-build-scripts/raw/master/generate_manifest.py'
 # ROOT_DEPLOYMENT_ADDRESS='http://your.remote.host.com/ios_builds'
 # ARCHIVE_FILENAME='beta_archive.zip'
 # KEYCHAIN_LOCATION='/Users/tomcat/Library/Keychains/Your Company.keychain'
