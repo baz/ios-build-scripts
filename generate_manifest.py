@@ -10,12 +10,12 @@ import subprocess
 import plistlib
 import urlparse
 import string
+import fnmatch
 
 parser = OptionParser()
 parser.add_option('-f', '--app-bundle', action='store', dest='app_bundle', help='Path to app bundle')
 parser.add_option('-a', '--archive-name', action='store', dest='archive_name', help='Legacy archive filename')
 parser.add_option('-d', '--deployment-address', action='store', dest='deployment_address', help='Remote deployment path, where the app will eventually be hosted')
-parser.add_option('-i', '--info-plist', action='store', dest='info_plist', default='Info.plist', help='Info.plist filename inside the application bundle (defaults to Info.plist)')
 
 (options, args) = parser.parse_args()
 
@@ -34,9 +34,19 @@ class IPAGenerator(object):
 		index_file.write(self.template(app_name))
 		return HTML_FILENAME
 
+	"Locates the app's Info.plist"
+	def info_plist_filename(self):
+		filename = 'Info.plist'
+		for file in os.listdir(options.app_bundle):
+			if fnmatch.fnmatch(file, '*Info.plist'):
+				filename = file
+				break
+		return filename
+
 	"Generate manifest by parsing values from the app's Info.plist"
 	def generate_manifest(self, app_name):
-		info_plist_filepath = os.path.join(options.app_bundle, options.info_plist)
+		filename = self.info_plist_filename()
+		info_plist_filepath = os.path.join(options.app_bundle, filename)
 		info_plist_xml_filename = 'info_plist.xml'
 		# Use plutil to ensure that we are dealing with XML rather than the binary format
 		subprocess.Popen('plutil -convert xml1 -o ' + info_plist_xml_filename + ' ' + "'" + info_plist_filepath + "'", shell=True).wait()
