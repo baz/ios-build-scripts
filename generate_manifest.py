@@ -39,7 +39,7 @@ class IPAGenerator(object):
 		info_plist_filepath = os.path.join(options.app_bundle, options.info_plist)
 		info_plist_xml_filename = 'info_plist.xml'
 		# Use plutil to ensure that we are dealing with XML rather than the binary format
-		subprocess.Popen('plutil -convert xml1 -o ' + info_plist_xml_filename + ' ' + info_plist_filepath, shell=True).wait()
+		subprocess.Popen('plutil -convert xml1 -o ' + info_plist_xml_filename + ' ' + "'" + info_plist_filepath + "'", shell=True).wait()
 		info_plist_xml_file = open(info_plist_xml_filename, 'r')
 		app_plist = plistlib.readPlist(info_plist_xml_file)
 		os.remove(info_plist_xml_filename)
