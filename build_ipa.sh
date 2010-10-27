@@ -1,6 +1,7 @@
 #!/bin/bash
 # Below are required environment variables with some example content:
 # XCODE_BUILD_COMMAND='xcodebuild -sdk iphoneos4.1 -alltargets -configuration "Ad Hoc" clean build'
+# XCODE_BUILD_CONFIGURATION='Ad Hoc'
 # DISTRIBUTION_CERTIFICATE='iPhone Distribution: Your Company Pty Ltd'
 # PROVISIONING_PROFILE_PATH='/Users/tomcat/Library/MobileDevice/Provisioning Profiles/Your_Company_Ad_Hoc.mobileprovision'
 # GIT_BINARY='/usr/local/git/bin/git'
@@ -19,7 +20,7 @@ eval $XCODE_BUILD_COMMAND
 
 GIT_HASH="$($GIT_BINARY log --pretty=format:'' | wc -l)-$($GIT_BINARY rev-parse --short HEAD)"
 GIT_HASH=${GIT_HASH//[[:space:]]}
-BUILD_DIRECTORY="$(pwd)/build/${CONFIGURATION}-iphoneos"
+BUILD_DIRECTORY="$(pwd)/build/${XCODE_BUILD_CONFIGURATION}-iphoneos"
 cd "$BUILD_DIRECTORY" || die "Build directory does not exist."
 MANIFEST_SCRIPT=$(curl -fsS $MANIFEST_SCRIPT_LOCATION)
 MANIFEST_OUTPUT_HTML_FILENAME='index.html'
