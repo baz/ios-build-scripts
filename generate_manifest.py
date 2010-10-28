@@ -16,6 +16,7 @@ parser = OptionParser()
 parser.add_option('-f', '--app-bundle', action='store', dest='app_bundle', help='Path to app bundle')
 parser.add_option('-a', '--archive-name', action='store', dest='archive_name', help='Legacy archive filename')
 parser.add_option('-d', '--deployment-address', action='store', dest='deployment_address', help='Remote deployment path, where the app will eventually be hosted')
+parser.add_option('-c', '--changes-page-url', action='store', dest='changes_page_url', help='URL describing the changes that went into this build')
 
 (options, args) = parser.parse_args()
 
@@ -25,6 +26,8 @@ elif options.deployment_address == None:
 	parser.error("Please specify the deployment address.")
 elif options.archive_name == None:
 	parser.error("Please specify the filename of the legacy archive.")
+elif options.changes_page_url == None:
+	parser.error("Please specify a URL to a page listing the changes in this build.")
 
 class IPAGenerator(object):
 	"Generate index.html"
@@ -100,7 +103,9 @@ class IPAGenerator(object):
 		
 		<h1>iOS 4.0 Users:</h1>
 		
-		<div class="link"><a href="itms-services://?action=download-manifest&url=[DEPLOYMENT_PATH]">Tap Here to Install<br />[BETA_NAME]<br />On Your Device</a></div>
+		<div class="link"><a href="itms-services://?action=download-manifest&url=[DEPLOYMENT_PATH]">Tap here to install<br />[BETA_NAME]<br />On Your Device</a></div>
+
+		<p><strong><em><a href="[BUILD_CHANGES_URL]">Tap here to view changes in this build</a></em></strong><br /></p>
 		
 		<p><strong>Link didn't work?</strong><br />
 		Make sure you're visiting this page on your device, not your computer.</p>
@@ -119,9 +124,11 @@ class IPAGenerator(object):
 		TEMPLATE_PLACEHOLDER_NAME = '[BETA_NAME]'
 		TEMPLATE_PLACEHOLDER_DEPLOYMENT_PATH = '[DEPLOYMENT_PATH]'
 		TEMPLATE_PLACEHOLDER_ARCHIVE_FILENAME = '[BETA_ARCHIVE_FILENAME]'
+		TEMPLATE_PLACEHOLDER_BUILD_CHANGES_URL = '[BUILD_CHANGES_URL]'
 		template_html = string.replace(template_html, TEMPLATE_PLACEHOLDER_NAME, app_name)
 		template_html = string.replace(template_html, TEMPLATE_PLACEHOLDER_DEPLOYMENT_PATH, options.deployment_address)
 		template_html = string.replace(template_html, TEMPLATE_PLACEHOLDER_ARCHIVE_FILENAME, options.archive_name)
+		template_html = string.replace(template_html, TEMPLATE_PLACEHOLDER_BUILD_CHANGES_URL, options.changes_page_url)
 		return template_html
 
 generator = IPAGenerator()
